@@ -10,6 +10,8 @@
         factory(colorConfig);
     }
 }(function (colorConfig) {
+    var definedColor = colorConfig || {}
+
     var colorRegExp = /^\s*((#[a-f\d]{6})|(#[a-f\d]{3})|rgba?\(\s*([\d\.]+%?\s*,\s*[\d\.]+%?\s*,\s*[\d\.]+%?(?:\s*,\s*[\d\.]+%?)?)\s*\)|hsva?\(\s*([\d\.]+(?:deg|\xb0|%)?\s*,\s*[\d\.]+%?\s*,\s*[\d\.]+%?(?:\s*,\s*[\d\.]+)?)%?\s*\)|hsla?\(\s*([\d\.]+(?:deg|\xb0|%)?\s*,\s*[\d\.]+%?\s*,\s*[\d\.]+%?(?:\s*,\s*[\d\.]+)?)%?\s*\))\s*$/i;
 
     // 数组映射
@@ -265,20 +267,16 @@
      * @return {String} 规整颜色
      */
     COLOR.prototype.__normalize = function(color) {
-        var config_color;
-        // 颜色名
-        try {
-            config_color = colorConfig.find(color);
-        } catch (err) {
-            console.error("not found color.config.js!");
-        }
-        if(config_color === undefined) {
+        // 颜色名查找
+        var configColor = definedColor[color];
+        
+        if(configColor === undefined) {
             // 去掉空格
             color = this.__trim(color);
             // hsv与hsb等价
             color = color.replace(/hsb/i, 'hsv');
         } else {
-            color = config_color
+            color = configColor
         }
         // rgb转为rrggbb
         if (/^#[0-9a-f]{3}$/i.test(color)) {
@@ -707,9 +705,6 @@
 
         return this;
     }
-
-
-
 
     return COLOR;
 }));
